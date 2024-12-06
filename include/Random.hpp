@@ -49,7 +49,7 @@ namespace nnpp
 				}
 				return value;
 			}
-			throw std::runtime_error("Type '" + std::string(typeid(T).name()) + "' is not supported by Random::value");
+			throw std::runtime_error("Type is not supported by Random::value");
 		};
 		template<typename T>
 		static const T value(const T& min, const T& max, std::mt19937& mt19937)
@@ -66,7 +66,7 @@ namespace nnpp
 				auto value = distrib(mt19937);
 				return value;
 			}
-			throw std::runtime_error("Type '" + std::string(typeid(T).name()) + "' is not supported by Random::value");
+			throw std::runtime_error("Type is not supported by Random::value");
 		};
 		template<typename T>
 		static const T valueFromRandomRange(const std::vector<std::pair<T, T>>& ranges, const unsigned long& seed = (std::numeric_limits<unsigned long>::max)())
