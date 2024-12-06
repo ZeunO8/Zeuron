@@ -20,4 +20,6 @@ function(create_test TEST_NAME TEST_SOURCE)
     add_test(NAME ${TEST_NAME} COMMAND ${CMAKE_BINARY_DIR}/${TEST_NAME})
 endfunction()
 
+include(CTest)
+enable_testing()
 create_test(XOR tests/XOR.cpp)
