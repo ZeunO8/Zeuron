@@ -5,7 +5,10 @@
 using namespace nnpp;
 /*
  */
-NeuralNetwork::NeuralNetwork(const std::vector<unsigned long> &layerSizes)
+NeuralNetwork::NeuralNetwork(const std::vector<unsigned long> &layerSizes, const ActivationType &activationType):
+	activationType(activationType),
+	activation(std::get<0>(activationDerivatives[activationType])),
+	derivative(std::get<1>(activationDerivatives[activationType]))
 {
 	auto layerSizesSize = layerSizes.size();
 	for (unsigned long layerIndex = 0; layerIndex < layerSizesSize; ++layerIndex)
@@ -39,12 +42,6 @@ void NeuralNetwork::print()
 }
 /*
  */
-const long double sigmoid(const long double &x)
-{
-	return 1.0 / (1.0 + exp(-x));
-};
-/*
- */
 void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
 {
 	// Assign input values to the first layer
@@ -66,16 +63,10 @@ void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
 			}
 			// Add the bias and apply the activation function
 			neuron.inputValue += neuron.bias;
-			neuron.outputValue = sigmoid(neuron.inputValue);
+			neuron.outputValue = activation(neuron.inputValue);
 		}
 	}
 };
-/*
- */
-const long double sigmoidDerivative(const long double &x)
-{
-	return x * (1.0 - x);
-}
 /*
  */
 void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
@@ -85,7 +76,7 @@ void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 	for (size_t i = 0; i < outputLayer.neurons.size(); ++i)
 	{
 		long double delta = targetValues[i] - outputLayer.neurons[i].outputValue;
-		outputLayer.neurons[i].gradient = delta * sigmoidDerivative(outputLayer.neurons[i].outputValue);
+		outputLayer.neurons[i].gradient = delta * derivative(outputLayer.neurons[i].outputValue);
 	}
 
 	// Calculate gradients for the hidden layers (in reverse order)
@@ -101,7 +92,7 @@ void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 			{
 				error += nextLayer.neurons[nextNeuronIndex].weights[neuronIndex] * nextLayer.neurons[nextNeuronIndex].gradient;
 			}
-			hiddenLayer.neurons[neuronIndex].gradient = error * sigmoidDerivative(hiddenLayer.neurons[neuronIndex].outputValue);
+			hiddenLayer.neurons[neuronIndex].gradient = error * derivative(hiddenLayer.neurons[neuronIndex].outputValue);
 		}
 	}
 
@@ -135,6 +126,56 @@ const std::vector<long double> NeuralNetwork::getOutputs() const
 		outputs.push_back(lastLayer.neurons[neuronIndex].outputValue);
 	}
 	return outputs;
+};
+/*
+ */
+const long double sigmoidActivation(const long double &x)
+{
+	return 1.0 / (1.0 + exp(-x));
+};
+const long double sigmoidDerivative(const long double &x)
+{
+	return x * (1.0 - x);
+};
+/*
+ */
+const long double tanhActivation(const long double &x)
+{
+	return std::tanh(x); // Maps x to [-1, 1]
+};
+const long double tanhDerivative(const long double &x)
+{
+	const long double tanhX = std::tanh(x);
+	return 1.0 - tanhX * tanhX; // Derivative of tanh
+};
+/*
+ */
+const long double linearActivation(const long double &x)
+{
+	return x; // Identity function
+};
+const long double linearDerivative(const long double &x)
+{
+	return 1.0; // Constant derivative
+};
+/*
+ */
+const long double swishActivation(const long double &x)
+{
+	return x / (1.0 + exp(-x));
+};
+const long double swishDerivative(const long double &x)
+{
+	const long double sigmoidX = 1.0 / (1.0 + exp(-x));
+	return sigmoidX + x * sigmoidX * (1.0 - sigmoidX); // Swish derivative
+};
+/*
+ */
+NeuralNetwork::ActivationDerivativesMap NeuralNetwork::activationDerivatives = {
+	{NeuralNetwork::Sigmoid, {sigmoidActivation, sigmoidDerivative}},
+{NeuralNetwork::Tanh, {tanhActivation, tanhDerivative}},
+{NeuralNetwork::Linear, {linearActivation, linearDerivative}},
+{NeuralNetwork::Swish, {swishActivation, swishDerivative}}
 };
 /*
  */
