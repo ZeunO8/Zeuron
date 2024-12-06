@@ -20,9 +20,11 @@ int main()
 	);
 	auto &network = *neuralNetworkPointer;
 	auto trainingInputsSize = trainingInputs.size();
-	network.learningRate = 0.002;
+	network.learningRate = 0.0025;
 	unsigned long trainingIteration = 0;
-	for (; trainingIteration < 100000; trainingIteration++)
+	auto trainingIterations = 100000;
+	logger(Logger::Blank, "Training " + std::to_string(trainingIterations) + " iterations");
+	for (; trainingIteration < trainingIterations; trainingIteration++)
 	{;
 		for (unsigned long trainingIndex = 0; trainingIndex < trainingInputsSize; trainingIndex++)
 		{
@@ -36,7 +38,6 @@ int main()
 			logger(Logger::Blank, "Trained " + std::to_string(trainingIteration) + " iterations");
 		}
 	}
-	logger(Logger::Info, "Trained " + std::to_string(trainingIteration) + " iterations");
 	static const long double tolerance = 0.05;
 	for (unsigned long trainingIndex = 0; trainingIndex < trainingInputsSize; trainingIndex++)
 	{
