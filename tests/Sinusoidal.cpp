@@ -25,7 +25,7 @@ int main()
 	auto trainingIterations = 100000;
 	logger(Logger::Blank, "Training " + std::to_string(trainingIterations) + " iterations");
 	for (; trainingIteration < trainingIterations; trainingIteration++)
-	{;
+	{
 		for (unsigned long trainingIndex = 0; trainingIndex < trainingInputsSize; trainingIndex++)
 		{
 			auto &input = trainingInputs[trainingIndex];

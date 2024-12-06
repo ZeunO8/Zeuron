@@ -23,7 +23,7 @@ int main()
 	network.learningRate = 20;
 	unsigned long trainingIteration = 0;
 	for (; trainingIteration < 4096; trainingIteration++)
-	{;
+	{
 		for (unsigned long trainingIndex = 0; trainingIndex < trainingInputsSize; trainingIndex++)
 		{
 			auto &input = trainingInputs[trainingIndex];
