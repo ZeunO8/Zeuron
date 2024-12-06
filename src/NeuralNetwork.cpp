@@ -45,13 +45,15 @@ void NeuralNetwork::print()
 void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
 {
 	// Assign input values to the first layer
-	for (size_t i = 0; i < layers[0].neurons.size(); ++i)
-	{
-		layers[0].neurons[i].outputValue = inputValues[i];
-	}
-	// Forward propagate through subsequent layers
 	auto layersSize = layers.size();
 	auto layersData = layers.data();
+	auto layer0NeuronsSize = layersData[0].neurons.size();
+	auto layer0NeuronsData = layersData[0].neurons.data();
+	for (size_t i = 0; i < layer0NeuronsSize; ++i)
+	{
+		layer0NeuronsData[i].outputValue = inputValues[i];
+	}
+	// Forward propagate through subsequent layers
 	for (size_t layerIndex = 1; layerIndex < layersSize; ++layerIndex)
 	{
 		auto &prevLayer = layers[layerIndex - 1];
@@ -60,10 +62,11 @@ void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
 		for (auto &neuron : layersData[layerIndex].neurons)
 		{
 			neuron.inputValue = 0.0; // Reset the input value
+			auto neuronWeightsData = neuron.weights.data();
 			for (unsigned long n = 0; n < prevLayerNeuronsSize; ++n)
 			{
 				// Accumulate the weighted input values
-				neuron.inputValue += prevLayerNeuronsData[n].outputValue * neuron.weights[n];
+				neuron.inputValue += prevLayerNeuronsData[n].outputValue * neuronWeightsData[n];
 			}
 			// Add the bias and apply the activation function
 			neuron.inputValue += neuron.bias;
