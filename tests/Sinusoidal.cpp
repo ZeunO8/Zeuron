@@ -20,7 +20,7 @@ int main()
 	);
 	auto &network = *neuralNetworkPointer;
 	auto trainingInputsSize = trainingInputs.size();
-	network.learningRate = 0.0025;
+	network.learningRate = 0.0015;
 	unsigned long trainingIteration = 0;
 	auto trainingIterations = 100000;
 	logger(Logger::Blank, "Training " + std::to_string(trainingIterations) + " iterations");
