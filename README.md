@@ -63,3 +63,9 @@ network.feedforward(input);
 auto outputs = network.getOutputs();
 logger(Logger::Info, "Output: " + std::to_string(outputs[0]));
 ```
+
+See [tests](/tests) for more usage examples
+
+## License
+
+Code is distributed under MIT license, feel free to use it in your proprietary projects as well.
