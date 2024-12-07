@@ -3,6 +3,7 @@
 #pragma once
 #include <NeuralNetwork.hpp>
 #include <thread>
+#include <memory>
 /*
  */
 struct fenster;

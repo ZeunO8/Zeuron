@@ -2,6 +2,7 @@
  */
 #include <NeuralNetwork.hpp>
 #include <Logger.hpp>
+#include <cmath>
 using namespace nnpp;
 /*
  */

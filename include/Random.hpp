@@ -4,6 +4,7 @@
 #include <limits>
 #include <random>
 #include <vector>
+#include <stdexcept>
 /*
  */
 namespace nnpp
