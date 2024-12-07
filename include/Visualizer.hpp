@@ -24,6 +24,7 @@ namespace nnpp
 		std::shared_ptr<uint32_t> buf;
 		struct fenster *f;
   	Visualizer(NeuralNetwork &network, const int &windowWidth, const int &windowHeight);
+		void close();
 		~Visualizer();
     void render();
 		uint32_t mapValueToColor(long double value);

@@ -4,7 +4,7 @@ project(nnpp VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
-include_directories(vendor)
+include_directories(vendor/fenster)
 
 add_library(nnpp
         STATIC
