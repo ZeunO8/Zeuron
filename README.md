@@ -1,6 +1,6 @@
-# nn++
+# Zeuron
 
-A simple NeuralNetwork library written in C++
+A NeuralNetwork library written in C++
 
 Uses CMake for it's build system and comes with some included tests
 

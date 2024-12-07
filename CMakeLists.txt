@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.30)
-project(nnpp VERSION 0.2.0)
+project(zeuron VERSION 0.2.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
 include_directories(vendor/fenster)
 
-add_library(nnpp
+add_library(zeuron
         STATIC
         src/Neuron.cpp
         src/Layer.cpp
@@ -18,7 +18,7 @@ add_library(nnpp
 
 function(create_test TEST_NAME TEST_SOURCE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
-    target_link_libraries(${TEST_NAME} nnpp)
+    target_link_libraries(${TEST_NAME} zeuron)
     add_test(NAME ${TEST_NAME} COMMAND ${CMAKE_BINARY_DIR}/${TEST_NAME})
 endfunction()
 
