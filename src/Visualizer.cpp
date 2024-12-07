@@ -135,7 +135,7 @@ uint32_t colorToUint32(const Color &color)
  */
 void Visualizer::render()
 {
-		fenster_rect(f, 0, 0, windowWidth, windowHeight, 0x00777777);
+		fenster_rect(f, 0, 0, windowWidth, windowHeight, 0x0000bb99);
     static const int radius = 10;
     static const uint32_t defaultLineColor = 0x00555555; // Dark grey color for the lines
 
