@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.30)
 project(nnpp VERSION 0.1.0)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
+include_directories(vendor)
 
 add_library(nnpp
         STATIC
@@ -12,6 +13,7 @@ add_library(nnpp
         src/NeuralNetwork.cpp
         src/Logger.cpp
         src/Random.cpp
+        src/Visualizer.cpp
 )
 
 function(create_test TEST_NAME TEST_SOURCE)

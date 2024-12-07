@@ -3,6 +3,7 @@
 #pragma once
 #include "./Layer.hpp"
 #include <unordered_map>
+#include <mutex>
 /*
  */
 namespace nnpp
@@ -27,6 +28,7 @@ namespace nnpp
 		ActivationType activationType = Sigmoid;
 		ActivationFunctionD(activation);
 		DerivativeFunctionD(derivative);
+		std::mutex mutex;
 		NeuralNetwork() = default;
 		NeuralNetwork(const std::vector<unsigned long> &layerSizes, const ActivationType &activationType = Sigmoid);
 		NeuralNetwork(const NeuralNetwork &) = delete;
