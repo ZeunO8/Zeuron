@@ -54,10 +54,21 @@ int main()
 			assert(difference <= tolerance);
 		}
 	}
-	std::vector<long double> zeroPointFiveInput({0.5});
-	network.feedforward(zeroPointFiveInput);
-	auto zeroPointFiveOutput = network.getOutputs();
-	logger(Logger::Info, "y = sin(0.5). y = " + std::to_string(zeroPointFiveOutput[0]));
+	// 0.5
+	std::vector<long double> input({0.5});
+	network.feedforward(input);
+	auto output = network.getOutputs();
+	logger(Logger::Info, "y = sin(" + std::to_string(input[0]) + "). y = " + std::to_string(output[0]));
+	// M_PI
+	input[0] = M_PI;
+	network.feedforward(input);
+	output = network.getOutputs();
+	logger(Logger::Info, "y = sin(" + std::to_string(input[0]) + "). y = " + std::to_string(output[0]));
+	// M_PI / 2
+	input[0] = M_PI /2;
+	network.feedforward(input);
+	output = network.getOutputs();
+	logger(Logger::Info, "y = sin(" + std::to_string(input[0]) + "). y = " + std::to_string(output[0]));
 	return 0;
 };
 /*
