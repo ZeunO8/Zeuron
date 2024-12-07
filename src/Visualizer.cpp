@@ -54,7 +54,7 @@ uint32_t colorToUint32(const Color &color)
 void Visualizer::render()
 {
     static const int radius = 10;
-    static const uint32_t defaultLineColor = 0x00333333; // Dark grey color for the lines
+    static const uint32_t defaultLineColor = 0x00555555; // Dark grey color for the lines
 
     int numLayers = network.layers.size();
 
@@ -173,7 +173,7 @@ uint32_t Visualizer::mapWeightToColor(const Neuron &neuron)
 	// Map weight value to color (e.g., blue to red spectrum)
 	uint8_t r = static_cast<uint8_t>(avgWeight * 255);
 	uint8_t b = static_cast<uint8_t>((1.0 - avgWeight) * 255);
-	return (r << 16) | (b << 8);  // RGB format (no green for simplicity)
+	return (r << 16) | (b << 0);  // RGB format (no green for simplicity)
 }
 
 void Visualizer::startWindow()
