@@ -1,5 +1,7 @@
 # Zeuron
 
+<img src="/images/zeuron.jpg" alt="Zeuron Logo" width="400" height="400">
+
 A NeuralNetwork library written in C++
 
 Uses CMake for it's build system and comes with some included tests
