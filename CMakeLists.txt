@@ -18,7 +18,11 @@ add_library(zeuron
 
 function(create_test TEST_NAME TEST_SOURCE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
-    target_link_libraries(${TEST_NAME} zeuron X11)
+    if(UNIX AND NOT APPLE)
+        target_link_libraries(${TEST_NAME} zeuron X11)
+    else()
+        target_link_libraries(${TEST_NAME} zeuron)
+    endif()
     add_test(NAME ${TEST_NAME} COMMAND ${CMAKE_BINARY_DIR}/${TEST_NAME})
 endfunction()
 
