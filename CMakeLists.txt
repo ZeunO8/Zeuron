@@ -16,6 +16,12 @@ add_library(zeuron
         src/Visualizer.cpp
 )
 
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+    target_link_libraries(zeuron PRIVATE ${X11_LIBRARIES})
+    include_directories(${X11_INCLUDE_DIR})
+endif()
+
 function(create_test TEST_NAME TEST_SOURCE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
     target_link_libraries(${TEST_NAME} zeuron)
