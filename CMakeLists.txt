@@ -16,13 +16,15 @@ add_library(zeuron
         src/Visualizer.cpp
 )
 
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+    target_link_libraries(zeuron PRIVATE ${X11_LIBRARIES})
+    include_directories(${X11_INCLUDE_DIR})
+endif()
+
 function(create_test TEST_NAME TEST_SOURCE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
-    if(UNIX AND NOT APPLE)
-        target_link_libraries(${TEST_NAME} zeuron X11)
-    else()
-        target_link_libraries(${TEST_NAME} zeuron)
-    endif()
+    target_link_libraries(${TEST_NAME} zeuron)
     add_test(NAME ${TEST_NAME} COMMAND ${CMAKE_BINARY_DIR}/${TEST_NAME})
 endfunction()
 
