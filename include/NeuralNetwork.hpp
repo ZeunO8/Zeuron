@@ -6,6 +6,10 @@
 #include <mutex>
 /*
  */
+namespace bs
+{
+	struct ByteStream;
+}
 namespace nnpp
 {
 	#define ActivationFunction const long double(*)(const long double &)
@@ -31,12 +35,14 @@ namespace nnpp
 		std::mutex mutex;
 		NeuralNetwork() = default;
 		NeuralNetwork(const std::vector<unsigned long> &layerSizes, const ActivationType &activationType = Sigmoid);
+		NeuralNetwork(bs::ByteStream &byteStream);
 		NeuralNetwork(const NeuralNetwork &) = delete;
 		NeuralNetwork(NeuralNetwork &&) = delete;
 		void print();
 		void feedforward(const std::vector<long double> &inputValues);
 		void backpropagate(const std::vector<long double> &targetValues);
 		const std::vector<long double> getOutputs() const;
+		bs::ByteStream serialize() const;
 	};
 }
 /*

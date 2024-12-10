@@ -3,7 +3,9 @@
 #include <NeuralNetwork.hpp>
 #include <Logger.hpp>
 #include <cmath>
+#include <ByteStream.hpp>
 using namespace nnpp;
+using namespace bs;
 /*
  */
 NeuralNetwork::NeuralNetwork(const std::vector<unsigned long> &layerSizes, const ActivationType &activationType):
@@ -16,6 +18,85 @@ NeuralNetwork::NeuralNetwork(const std::vector<unsigned long> &layerSizes, const
 	{
 		unsigned long numberOfInputs = (layerIndex == 0) ? layerSizes[0] : layerSizes[layerIndex - 1];
 		layers.push_back({layerSizes[layerIndex], numberOfInputs});
+	}
+};
+/*
+ */
+template <>
+const unsigned long ByteStream::write(const Neuron &neuron)
+{
+	unsigned long bytesWritten = 0;
+	bytesWritten += write<const long double &>(neuron.bias);
+	bytesWritten += write<const long double &>(neuron.gradient);
+	bytesWritten += write<const std::vector<long double> &>(neuron.weights);
+	bytesWritten += write<const long double &>(neuron.outputValue);
+	bytesWritten += write<const long double &>(neuron.inputValue);
+	return bytesWritten;
+}
+/*
+ */
+template <>
+const bool ByteStream::read(Neuron &neuron, unsigned long &bytesRead, const bool &removeBytes)
+{
+	if (!read(neuron.bias, bytesRead, removeBytes))
+	{
+		return false;
+	}
+	if (!read(neuron.gradient, bytesRead, removeBytes))
+	{
+		return false;
+	}
+	if (!read(neuron.weights, bytesRead, removeBytes))
+	{
+		return false;
+	}
+	if (!read(neuron.outputValue, bytesRead, removeBytes))
+	{
+		return false;
+	}
+	if (!read(neuron.inputValue, bytesRead, removeBytes))
+	{
+		return false;
+	}
+	return true;
+};
+/*
+ */
+BYTE_STREAM_READ_VECTOR(Neuron);
+BYTE_STREAM_WRITE_VECTOR(Neuron);
+
+/*
+ */
+template <>
+const unsigned long ByteStream::write(const Layer &layer)
+{
+	unsigned long bytesWritten = 0;
+	bytesWritten += write<const std::vector<Neuron> &>(layer.neurons);
+	return bytesWritten;
+}
+/*
+ */
+template <>
+const bool ByteStream::read(Layer &layer, unsigned long &bytesRead, const bool &removeBytes)
+{
+	return read(layer.neurons, bytesRead, removeBytes);
+};
+/*
+ */
+BYTE_STREAM_READ_VECTOR(Layer);
+BYTE_STREAM_WRITE_VECTOR(Layer);
+/*
+ */
+NeuralNetwork::NeuralNetwork(bs::ByteStream& byteStream)
+{
+	unsigned long bytesRead = 0;
+	if (!byteStream.read(learningRate, bytesRead, true))
+	{
+		return;
+	}
+	if (!byteStream.read(layers, bytesRead, true))
+	{
+		return;
 	}
 };
 /*
@@ -146,6 +227,15 @@ const std::vector<long double> NeuralNetwork::getOutputs() const
 		outputs.push_back(neuronsData[neuronIndex].outputValue);
 	}
 	return outputs;
+};
+/*
+ */
+ByteStream NeuralNetwork::serialize() const
+{
+	ByteStream byteStream;
+	byteStream.write<const long double &>(learningRate);
+	byteStream.write<const std::vector<Layer> &>(layers);
+	return byteStream;
 };
 /*
  */

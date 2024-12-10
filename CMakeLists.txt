@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
 include_directories(vendor/fenster)
+include_directories(vendor/ByteStream/include)
 
 add_library(zeuron
         STATIC
@@ -21,6 +22,10 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(zeuron PRIVATE ${X11_LIBRARIES})
     include_directories(${X11_INCLUDE_DIR})
 endif()
+
+add_subdirectory(vendor/ByteStream)
+
+target_link_libraries(zeuron PRIVATE ByteStream)
 
 function(create_test TEST_NAME TEST_SOURCE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
