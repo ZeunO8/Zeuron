@@ -30,9 +30,9 @@ ctest --test-dir build --rerun-failed --output-on-failure -C Debug
 std::shared_ptr<NeuralNetwork> neuralNetworkPointer(
     new NeuralNetwork(
         // Layer sizes
-        std::vector<unsigned long>({ 1, 10, 20, 10, 1 }),
+        std::vector<unsigned long>({ 2, 3, 1 }),
         // ActivationType. Can be one of: Sigmoid, Linear, Swish, Tanh
-        NeuralNetwork::Tanh
+        NeuralNetwork::Sigmoid
     )
 );
 auto &network = *neuralNetworkPointer;
