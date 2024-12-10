@@ -94,6 +94,14 @@ NeuralNetwork::NeuralNetwork(bs::ByteStream& byteStream)
 	{
 		return;
 	}
+	unsigned int activationTypeInt = 0;
+	if (!byteStream.read(activationTypeInt, bytesRead, true))
+	{
+		return;
+	}
+	activationType = (NeuralNetwork::ActivationType)activationTypeInt;
+	activation = std::get<0>(activationDerivatives[activationType]);
+	derivative = std::get<1>(activationDerivatives[activationType]);
 	if (!byteStream.read(layers, bytesRead, true))
 	{
 		return;
@@ -234,6 +242,7 @@ ByteStream NeuralNetwork::serialize() const
 {
 	ByteStream byteStream;
 	byteStream.write<const long double &>(learningRate);
+	byteStream.write<const unsigned int &>((unsigned int)activationType);
 	byteStream.write<const std::vector<Layer> &>(layers);
 	return byteStream;
 };
