@@ -18,7 +18,7 @@ cmake --build build
 ### Testing
 
 ```bash
-ctest --test-dir build --rerun-failed --output-on-failure -C Debug
+ctest --test-dir build --rerun-failed -VV -C Debug
 ```
 
 ### Usage
