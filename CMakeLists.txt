@@ -17,6 +17,14 @@ add_library(zeuron
         src/Visualizer.cpp
 )
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+if (WIN32)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+elseif (APPLE OR UNIX)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+endif()
+
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
     target_link_libraries(zeuron ${X11_LIBRARIES})
