@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 	}
 	catch (...)
 	{
-		neuralNetworkPointer = std::make_shared<NeuralNetwork>(std::vector<unsigned long>({1, 14, 17, 23, 11, 13, 1}), NeuralNetwork::Tanh);
+		neuralNetworkPointer = std::make_shared<NeuralNetwork>(std::vector<unsigned long>({1, 16, 12, 8, 1}), NeuralNetwork::Tanh);
 	}
 	auto &network = *neuralNetworkPointer;
 	Visualizer visualizer(network, 640, 480);
