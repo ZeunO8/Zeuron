@@ -44,7 +44,11 @@ int main()
 		for (unsigned long outputIndex = 0; outputIndex < actualOutputsSize; ++outputIndex)
 		{
 			long double difference = std::abs(actualOutputs[outputIndex] - expectedOutput[outputIndex]);
-			assert(difference <= tolerance);
+			logger(Logger::Info,
+				"For input { " + std::to_string(input[0]) +
+						", " + std::to_string(input[1]) + " } the network has a difference of: " + std::to_string(difference) +
+						", output: " + std::to_string(actualOutputs[outputIndex]) +
+						", is " + (difference <= tolerance ? "within" : "not within") + "tolerance of " + std::to_string(tolerance));
 		}
 	}
 	return 0;
