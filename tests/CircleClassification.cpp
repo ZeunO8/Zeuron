@@ -44,7 +44,7 @@ int main()
 				"For input { " + std::to_string(input[0]) +
 						", " + std::to_string(input[1]) + " } the network has a difference of: " + std::to_string(difference) +
 						", output: " + std::to_string(actualOutputs[outputIndex]) +
-						", is " + (difference <= tolerance ? "within" : "not within") + "tolerance of " + std::to_string(tolerance));
+						", is " + (difference <= tolerance ? "within" : "not within") + " tolerance of " + std::to_string(tolerance));
 		}
 	}
 	return 0;
