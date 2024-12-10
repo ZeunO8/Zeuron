@@ -19,13 +19,13 @@ add_library(zeuron
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
-    target_link_libraries(zeuron PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(zeuron ${X11_LIBRARIES})
     include_directories(${X11_INCLUDE_DIR})
 endif()
 
 add_subdirectory(vendor/ByteStream)
 
-target_link_libraries(zeuron PRIVATE ByteStream)
+target_link_libraries(zeuron ByteStream)
 
 function(create_test TEST_NAME TEST_SOURCE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
