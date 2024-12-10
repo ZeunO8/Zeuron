@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 	{
 		network.learningRate = 0.0015;
 		unsigned long trainingIteration = 0;
-		auto trainingIterations = argc == 1 ? 200000 : 50000;
+		auto trainingIterations = 150000;
 		logger(Logger::Blank, "Training " + std::to_string(trainingIterations) + " iterations");
 		for (; trainingIteration < trainingIterations; trainingIteration++)
 		{
