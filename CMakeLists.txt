@@ -27,13 +27,17 @@ add_subdirectory(vendor/ByteStream)
 
 target_link_libraries(zeuron ByteStream)
 
+if(WIN32)
+    set(TEST_EXT ".exe")
+endif()
+
 function(create_test TEST_NAME TEST_SOURCE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
     target_link_libraries(${TEST_NAME} zeuron)
     if(UNIX AND NOT APPLE)
         target_link_libraries(${TEST_NAME} ${X11_LIBRARIES})
     endif()
-    add_test(NAME ${TEST_NAME} COMMAND ${CMAKE_BINARY_DIR}/${TEST_NAME})
+    add_test(NAME ${TEST_NAME} COMMAND $<TARGET_FILE_DIR:${TEST_NAME}>/${TEST_NAME}${TEST_EXT})
 endfunction()
 
 include(CTest)
