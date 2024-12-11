@@ -24,9 +24,10 @@ Neuron::Neuron(const unsigned long &numberOfInputs,
 	}
 	this->weights = weights;
 	auto weightsSize = this->weights.size();
+	float stddev = std::sqrt(2.0 / numberOfInputs);
 	for (unsigned long weightIndex = weightsSize; weightIndex < numberOfInputs; weightIndex++)
 	{
-		this->weights.push_back(Random::value<long double>(-1, 1));
+		this->weights.push_back(Random::value<long double>(-stddev, stddev));
 	}
 };
 /*

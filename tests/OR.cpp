@@ -11,7 +11,12 @@ int main()
 {
 	std::vector<std::vector<long double>> trainingInputs = {{{{0, 0}}, {{0, 1}}, {{1, 0}}, {{1, 1}}}};
 	std::vector<std::vector<long double>> trainingOutputs = {{{{0}}, {{1}}, {{1}}, {{1}}}};
-	std::shared_ptr<NeuralNetwork> neuralNetworkPointer(new NeuralNetwork(std::vector<unsigned long>({2, 2, 1})));
+	std::shared_ptr<NeuralNetwork> neuralNetworkPointer(
+	new NeuralNetwork(
+		2,
+		{{NeuralNetwork::Sigmoid, 2}, {NeuralNetwork::Sigmoid, 1}}
+	)
+);
 	auto &network = *neuralNetworkPointer;
 	auto trainingInputsSize = trainingInputs.size();
 	network.learningRate = 20;

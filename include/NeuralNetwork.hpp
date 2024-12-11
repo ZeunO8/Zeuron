@@ -14,8 +14,6 @@ namespace nnpp
 {
 	#define ActivationFunction const long double(*)(const long double &)
 	#define DerivativeFunction const long double(*)(const long double &)
-	#define ActivationFunctionD(NAME) const long double(*NAME)(const long double &)
-	#define DerivativeFunctionD(NAME) const long double(*NAME)(const long double &)
 	struct NeuralNetwork
 	{
 		enum ActivationType
@@ -23,18 +21,22 @@ namespace nnpp
 			Sigmoid,
 			Linear,
 			Tanh,
-			Swish
+			Swish,
+			ReLU,
+			LeakyReLU
 		};
 		typedef std::unordered_map<ActivationType, std::pair<ActivationFunction, DerivativeFunction>> ActivationDerivativesMap;
 		static ActivationDerivativesMap activationDerivatives;
 		std::vector<Layer> layers;
-		long double learningRate = 0.13;
-		ActivationType activationType = Sigmoid;
-		ActivationFunctionD(activation);
-		DerivativeFunctionD(derivative);
+		long double learningRate;
+		std::vector<int> activationTypes;
+		std::vector<const long double(*)(const long double &)> activations;
+		std::vector<const long double(*)(const long double &)> derivatives;
 		std::mutex mutex;
 		NeuralNetwork() = default;
-		NeuralNetwork(const std::vector<unsigned long> &layerSizes, const ActivationType &activationType = Sigmoid);
+		NeuralNetwork(const unsigned long &firstLayerSize,
+									const std::vector<std::pair<ActivationType, unsigned long>> &layerSpecs,
+									const long double &learningRate = 0.13);
 		NeuralNetwork(bs::ByteStream &byteStream);
 		NeuralNetwork(const NeuralNetwork &) = delete;
 		NeuralNetwork(NeuralNetwork &&) = delete;

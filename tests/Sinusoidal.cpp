@@ -58,6 +58,10 @@ void writeBufferToFile(const char* buffer, unsigned long size, const std::string
 }
 /*
  */
+long double learningRateSchedule(const long double &initialLearningRate, const long double &decayRate, const unsigned long &iteration)
+{
+	return initialLearningRate * std::exp(-decayRate * iteration);
+}
 int main(int argc, char **argv)
 {
 	std::vector<std::vector<long double>> trainingInputs = {{{{0}}, {{0.1}}, {{0.2}}, {{0.3}}, {{0.4}}, {{0.5}}, {{0.6}}, {{0.7}}, {{0.8}}, {{0.9}}, {{1.0}}, {{1.1}}, {{1.2}}, {{1.3}}, {{1.4}}, {{1.5}}, {{1.6}}, {{1.7}}, {{1.8}}, {{1.9}}, {{2.0}}, {{2.1}}, {{2.2}}, {{2.3}}, {{2.4}}, {{2.5}}, {{2.6}}, {{2.7}}, {{2.8}}, {{2.9}}, {{3.0}}, {{3.1}}, {{3.2}}, {{3.3}}, {{3.4}}, {{3.5}}, {{3.6}}, {{3.7}}, {{3.8}}, {{3.9}}, {{4.0}}, {{4.1}}, {{4.2}}, {{4.3}}, {{4.4}}, {{4.5}}, {{4.6}}, {{4.7}}, {{4.8}}, {{4.9}}, {{5.0}}, {{5.1}}, {{5.2}}, {{5.3}}, {{5.4}}, {{5.5}}, {{5.6}}, {{5.7}}, {{5.8}}, {{5.9}}, {{6.0}}, {{6.1}}, {{6.2}}, {{6.3}}, {{6.4}}, {{6.5}}, {{6.6}}, {{6.7}}, {{6.8}}, {{6.9}}, {{7.0}}, {{7.1}}, {{7.2}}, {{7.3}}, {{7.4}}, {{7.5}}, {{7.6}}, {{7.7}}, {{7.8}}, {{7.9}}, {{8.0}}, {{8.1}}, {{8.2}}, {{8.3}}, {{8.4}}, {{8.5}}, {{8.6}}, {{8.7}}, {{8.8}}, {{8.9}}, {{9.0}}, {{9.1}}, {{9.2}}, {{9.3}}, {{9.4}}, {{9.5}}, {{9.6}}, {{9.7}}, {{9.8}}, {{9.9}}, {{10.0}}}};
@@ -73,19 +77,30 @@ int main(int argc, char **argv)
 	}
 	catch (...)
 	{
-		neuralNetworkPointer = std::make_shared<NeuralNetwork>(std::vector<unsigned long>({1, 16, 12, 8, 1}), NeuralNetwork::Tanh);
+		neuralNetworkPointer = std::make_shared<NeuralNetwork>(
+			1,
+			std::vector<std::pair<NeuralNetwork::ActivationType, unsigned long>>({
+	        { NeuralNetwork::Tanh, 18 },  // Start with a moderate number of neurons
+					{ NeuralNetwork::Tanh, 14 },   // Reduce the size progressively
+					{ NeuralNetwork::LeakyReLU, 10 },   // Further reduce to improve learning efficiency
+					{ NeuralNetwork::Tanh, 6 },        // Tanh here to allow non-linearity
+					{ NeuralNetwork::Tanh, 1 }         // Output layer
+			}),
+			0.015
+		);
 	}
 	auto &network = *neuralNetworkPointer;
 	Visualizer visualizer(network, 640, 480);
 	auto trainingInputsSize = trainingInputs.size();
 	if (!trained)
 	{
-		network.learningRate = 0.0015;
+		const auto initialLearningRate = network.learningRate;
 		unsigned long trainingIteration = 0;
 		auto trainingIterations = 150000;
 		logger(Logger::Blank, "Training " + std::to_string(trainingIterations) + " iterations");
 		for (; trainingIteration < trainingIterations; trainingIteration++)
 		{
+			network.learningRate = learningRateSchedule(initialLearningRate,  0.0002, trainingIteration);
 			for (unsigned long trainingIndex = 0; trainingIndex < trainingInputsSize; trainingIndex++)
 			{
 				auto &input = trainingInputs[trainingIndex];

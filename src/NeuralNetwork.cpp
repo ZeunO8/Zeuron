@@ -8,16 +8,21 @@ using namespace nnpp;
 using namespace bs;
 /*
  */
-NeuralNetwork::NeuralNetwork(const std::vector<unsigned long> &layerSizes, const ActivationType &activationType):
-	activationType(activationType),
-	activation(std::get<0>(activationDerivatives[activationType])),
-	derivative(std::get<1>(activationDerivatives[activationType]))
+NeuralNetwork::NeuralNetwork(const unsigned long &firstLayerSize,
+														 const std::vector<std::pair<ActivationType, unsigned long>> &layerSpecs,
+														 const long double &learningRate):
+	learningRate(learningRate)
 {
-	auto layerSizesSize = layerSizes.size();
-	for (unsigned long layerIndex = 0; layerIndex < layerSizesSize; ++layerIndex)
+	layers.push_back({firstLayerSize, 0});
+	for (const auto &layerSpec : layerSpecs)
 	{
-		unsigned long numberOfInputs = (layerIndex == 0) ? layerSizes[0] : layerSizes[layerIndex - 1];
-		layers.push_back({layerSizes[layerIndex], numberOfInputs});
+		const ActivationType &activationType = layerSpec.first;
+		unsigned long numberOfNeurons = layerSpec.second;
+		unsigned long numberOfInputs = layers.back().neurons.size();
+		layers.push_back({numberOfNeurons, numberOfInputs});
+		activationTypes.push_back((int)activationType);
+		activations.push_back(std::get<0>(activationDerivatives[activationType]));
+		derivatives.push_back(std::get<1>(activationDerivatives[activationType]));
 	}
 };
 /*
@@ -94,14 +99,16 @@ NeuralNetwork::NeuralNetwork(bs::ByteStream& byteStream)
 	{
 		return;
 	}
-	unsigned int activationTypeInt = 0;
-	if (!byteStream.read(activationTypeInt, bytesRead, true))
+	if (!byteStream.read(activationTypes, bytesRead, true))
 	{
 		return;
 	}
-	activationType = (NeuralNetwork::ActivationType)activationTypeInt;
-	activation = std::get<0>(activationDerivatives[activationType]);
-	derivative = std::get<1>(activationDerivatives[activationType]);
+	for (auto &activationTypeInt : activationTypes)
+	{
+		auto activationType = (ActivationType)activationTypeInt;
+		activations.push_back(std::get<0>(activationDerivatives[activationType]));
+		derivatives.push_back(std::get<1>(activationDerivatives[activationType]));
+	}
 	if (!byteStream.read(layers, bytesRead, true))
 	{
 		return;
@@ -150,6 +157,7 @@ void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
 		auto &prevLayer = layers[layerIndex - 1];
 		auto prevLayerNeuronsSize = prevLayer.neurons.size();
 		auto prevLayerNeuronsData = prevLayer.neurons.data();
+		auto &activation = activations[layerIndex - 1];
 		for (auto &neuron : layersData[layerIndex].neurons)
 		{
 			neuron.inputValue = 0.0; // Reset the input value
@@ -167,6 +175,15 @@ void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
 };
 /*
  */
+const long double GRADIENT_CLIP_THRESHOLD = 10.0; // You can adjust this threshold
+
+void clipGradient(long double& gradient)
+{
+	if (gradient > GRADIENT_CLIP_THRESHOLD)
+		gradient = GRADIENT_CLIP_THRESHOLD;
+	else if (gradient < -GRADIENT_CLIP_THRESHOLD)
+		gradient = -GRADIENT_CLIP_THRESHOLD;
+}
 void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 {
 	std::lock_guard<std::mutex> lock(mutex);
@@ -175,10 +192,12 @@ void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 	auto outputLayerNeuronsSize = outputLayer.neurons.size();
 	auto outputLayerNeuronsData = outputLayer.neurons.data();
 	auto targetValuesData = targetValues.data();
+	auto &outputDerivative = derivatives.back();
 	for (size_t i = 0; i < outputLayerNeuronsSize; ++i)
 	{
 		long double delta = targetValuesData[i] - outputLayerNeuronsData[i].outputValue;
-		outputLayerNeuronsData[i].gradient = delta * derivative(outputLayerNeuronsData[i].outputValue);
+		outputLayerNeuronsData[i].gradient = delta * outputDerivative(outputLayerNeuronsData[i].outputValue);
+		clipGradient(outputLayerNeuronsData[i].gradient);
 	}
 
 	// Calculate gradients for the hidden layers (in reverse order)
@@ -192,6 +211,7 @@ void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 		auto hiddenLayerNeuronsData = hiddenLayer.neurons.data();
 		auto nextLayerNeuronsSize = nextLayer.neurons.size();
 		auto nextLayerNeuronsData = nextLayer.neurons.data();
+		auto &layerDerivative = derivatives[layerIndex - 1];
 		for (size_t neuronIndex = 0; neuronIndex < hiddenLayerNeuronsSize; ++neuronIndex)
 		{
 			long double error = 0.0;
@@ -199,7 +219,8 @@ void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 			{
 				error += nextLayerNeuronsData[nextNeuronIndex].weights[neuronIndex] * nextLayerNeuronsData[nextNeuronIndex].gradient;
 			}
-			hiddenLayerNeuronsData[neuronIndex].gradient = error * derivative(hiddenLayerNeuronsData[neuronIndex].outputValue);
+			hiddenLayerNeuronsData[neuronIndex].gradient = error * layerDerivative(hiddenLayerNeuronsData[neuronIndex].outputValue);
+			clipGradient(hiddenLayerNeuronsData[neuronIndex].gradient);
 		}
 	}
 
@@ -242,7 +263,7 @@ ByteStream NeuralNetwork::serialize() const
 {
 	ByteStream byteStream;
 	byteStream.write<const long double &>(learningRate);
-	byteStream.write<const unsigned int &>((unsigned int)activationType);
+	byteStream.write<const std::vector<int> &>(activationTypes);
 	byteStream.write<const std::vector<Layer> &>(layers);
 	return byteStream;
 };
@@ -290,11 +311,35 @@ const long double swishDerivative(const long double &x)
 };
 /*
  */
+const long double reluActivation(const long double &x)
+{
+	return (x > 0.0) ? x : 0.0; // ReLU: Returns x if x > 0, otherwise 0
+}
+const long double reluDerivative(const long double &x)
+{
+	return (x > 0.0) ? 1.0 : 0.0; // Derivative: 1 if x > 0, otherwise 0
+}
+/*
+ */
+const long double leakyReluActivation(const long double &x)
+{
+	long double result = (x > 0.0) ? x : 0.01 * x;
+	return result;
+}
+const long double leakyReluDerivative(const long double &x)
+{
+	long double result = (x > 0.0) ? 1.0 : 0.01;
+	return result;
+}
+/*
+ */
 NeuralNetwork::ActivationDerivativesMap NeuralNetwork::activationDerivatives = {
 	{NeuralNetwork::Sigmoid, {sigmoidActivation, sigmoidDerivative}},
-{NeuralNetwork::Tanh, {tanhActivation, tanhDerivative}},
-{NeuralNetwork::Linear, {linearActivation, linearDerivative}},
-{NeuralNetwork::Swish, {swishActivation, swishDerivative}}
+	{NeuralNetwork::Tanh, {tanhActivation, tanhDerivative}},
+	{NeuralNetwork::Linear, {linearActivation, linearDerivative}},
+	{NeuralNetwork::Swish, {swishActivation, swishDerivative}},
+	{NeuralNetwork::ReLU, {reluActivation, reluDerivative}},
+	{NeuralNetwork::LeakyReLU, {leakyReluActivation, leakyReluDerivative}}
 };
 /*
  */
