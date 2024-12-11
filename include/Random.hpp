@@ -7,7 +7,7 @@
 #include <stdexcept>
 /*
  */
-namespace nnpp
+namespace zeuron
 {
 	class Random
 	{

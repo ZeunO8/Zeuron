@@ -4,7 +4,7 @@
 #include <Logger.hpp>
 #include <memory>
 #include <cassert>
-using namespace nnpp;
+using namespace zeuron;
 /*
  * Circle Classification (Inside/Outside a Circle)
  * Inputs are (x,y) points, outputs are 1 if the point lies within a circle of radius 1 centered at (0,0), otherwise 0.

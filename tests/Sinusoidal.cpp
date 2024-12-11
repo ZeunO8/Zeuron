@@ -11,7 +11,7 @@
 #include <iostream>
 #include <ByteStream.hpp>
 #include <Timer.hpp>
-using namespace nnpp;
+using namespace zeuron;
 using namespace bs;
 /*
  * Sinusoidal Function

@@ -4,7 +4,7 @@
 #include <Logger.hpp>
 #include <cmath>
 #include <ByteStream.hpp>
-using namespace nnpp;
+using namespace zeuron;
 using namespace bs;
 /*
  */

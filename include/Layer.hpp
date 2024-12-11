@@ -4,7 +4,7 @@
 #include "./Neuron.hpp"
 /*
  */
-namespace nnpp
+namespace zeuron
 {
 	struct Layer
 	{

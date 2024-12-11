@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-namespace nnpp
+namespace zeuron
 {
 	struct Timer {
 		using Clock = std::chrono::high_resolution_clock;

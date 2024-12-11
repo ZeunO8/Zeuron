@@ -1,7 +1,7 @@
 /*
 */
 #include <Layer.hpp>
-using namespace nnpp;
+using namespace zeuron;
 /*
  */
 Layer::Layer(const unsigned long &numberOfNeurons, const unsigned long &numberOfInputsPerNeuron)

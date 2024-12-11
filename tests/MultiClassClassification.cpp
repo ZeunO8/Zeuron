@@ -4,7 +4,7 @@
 #include <Logger.hpp>
 #include <memory>
 #include <cassert>
-using namespace nnpp;
+using namespace zeuron;
 /*
  * Multi-Class Classification (XOR Extended)
  * Classify 4 points into 3 classes:

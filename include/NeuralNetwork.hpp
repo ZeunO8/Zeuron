@@ -10,7 +10,7 @@ namespace bs
 {
 	struct ByteStream;
 }
-namespace nnpp
+namespace zeuron
 {
 	#define ActivationFunction const long double(*)(const long double &)
 	#define DerivativeFunction const long double(*)(const long double &)

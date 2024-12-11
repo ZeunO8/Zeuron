@@ -2,7 +2,7 @@
 */
 #include <Neuron.hpp>
 #include <Random.hpp>
-using namespace nnpp;
+using namespace zeuron;
 /*
  */
 Neuron::Neuron(const unsigned long &numberOfInputs,

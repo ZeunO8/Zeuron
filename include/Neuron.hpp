@@ -4,7 +4,7 @@
 #include <vector>
 /*
  */
-namespace nnpp
+namespace zeuron
 {
 	struct Neuron
 	{

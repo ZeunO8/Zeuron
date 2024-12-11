@@ -1,7 +1,7 @@
 /*
 */
 #include <Random.hpp>
-using namespace nnpp;
+using namespace zeuron;
 /*
  */
 std::random_device Random::_randomDevice;

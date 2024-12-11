@@ -7,7 +7,7 @@
 /*
  */
 struct fenster;
-namespace nnpp
+namespace zeuron
 {
 	struct Color
 	{

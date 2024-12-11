@@ -5,7 +5,7 @@
 #include <bit>
 #include <numeric>
 #include <algorithm>
-using namespace nnpp;
+using namespace zeuron;
 /*
  */
 static void fenster_line(struct fenster *f, int x0, int y0, int x1, int y1,
@@ -91,7 +91,7 @@ Visualizer::Visualizer(NeuralNetwork& network, const int &windowWidth, const int
 	windowWidth(windowWidth),
 	windowHeight(windowHeight),
 	buf((uint32_t*)malloc(windowWidth * windowHeight * sizeof(uint32_t)), free),
-	f(new struct fenster({ "nnpp visualizer", windowWidth, windowHeight, buf.get()}))
+	f(new struct fenster({ "zeuron visualizer", windowWidth, windowHeight, buf.get()}))
 {
 };
 /*

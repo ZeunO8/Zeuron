@@ -1,6 +1,6 @@
 #include <Timer.hpp>
 #include <Logger.hpp>
-using namespace nnpp;
+using namespace zeuron;
 
 // Starts the timer
 void Timer::start() {

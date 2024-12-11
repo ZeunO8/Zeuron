@@ -4,7 +4,7 @@
 #include <Logger.hpp>
 #include <memory>
 #include <cassert>
-using namespace nnpp;
+using namespace zeuron;
 /*
  */
 int main()
