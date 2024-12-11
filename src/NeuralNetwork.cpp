@@ -142,7 +142,6 @@ void NeuralNetwork::print()
  */
 void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
 {
-	std::lock_guard<std::mutex> lock(mutex);
 	// Assign input values to the first layer
 	auto layersSize = layers.size();
 	auto layersData = layers.data();
@@ -187,8 +186,6 @@ void clipGradient(long double& gradient)
 }
 void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 {
-    std::lock_guard<std::mutex> lock(mutex);
-
     // Calculate gradients for the output layer (parallelized)
     Layer &outputLayer = layers.back();
     auto outputLayerNeuronsSize = outputLayer.neurons.size();
@@ -258,7 +255,6 @@ void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
  */
 const std::vector<long double> NeuralNetwork::getOutputs() const
 {
-	std::lock_guard<std::mutex> lock((std::mutex&)mutex);
 	auto &lastLayer = layers.back();
 	std::vector<long double> outputs;
 	auto neuronsSize = lastLayer.neurons.size();
