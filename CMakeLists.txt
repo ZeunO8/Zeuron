@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(zeuron VERSION 0.4.0)
+project(zeuron VERSION 0.4.1)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -22,11 +22,6 @@ if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
     target_link_libraries(zeuron ${X11_LIBRARIES})
     include_directories(${X11_INCLUDE_DIR})
-endif()
-
-find_package(OpenMP REQUIRED)
-if(OpenMP_CXX_FOUND)
-    target_link_libraries(zeuron OpenMP::OpenMP_CXX)
 endif()
 
 add_subdirectory(vendor/ByteStream)
