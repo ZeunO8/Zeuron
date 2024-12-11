@@ -15,6 +15,7 @@ add_library(zeuron
         src/Logger.cpp
         src/Random.cpp
         src/Visualizer.cpp
+        src/Timer.cpp
 )
 
 if(UNIX AND NOT APPLE)
