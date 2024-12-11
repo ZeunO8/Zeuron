@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(zeuron VERSION 0.4.1)
+project(zeuron VERSION 0.4.2)
 
 set(CMAKE_CXX_STANDARD 20)
 
