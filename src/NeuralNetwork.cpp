@@ -4,6 +4,7 @@
 #include <Logger.hpp>
 #include <cmath>
 #include <ByteStream.hpp>
+#include <omp.h>
 using namespace nnpp;
 using namespace bs;
 /*
@@ -186,61 +187,72 @@ void clipGradient(long double& gradient)
 }
 void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 {
-	std::lock_guard<std::mutex> lock(mutex);
-	// Calculate gradients for the output layer
-	Layer &outputLayer = layers.back();
-	auto outputLayerNeuronsSize = outputLayer.neurons.size();
-	auto outputLayerNeuronsData = outputLayer.neurons.data();
-	auto targetValuesData = targetValues.data();
-	auto &outputDerivative = derivatives.back();
-	for (size_t i = 0; i < outputLayerNeuronsSize; ++i)
-	{
-		long double delta = targetValuesData[i] - outputLayerNeuronsData[i].outputValue;
-		outputLayerNeuronsData[i].gradient = delta * outputDerivative(outputLayerNeuronsData[i].outputValue);
-		clipGradient(outputLayerNeuronsData[i].gradient);
-	}
+    std::lock_guard<std::mutex> lock(mutex);
 
-	// Calculate gradients for the hidden layers (in reverse order)
-	auto layersSize = layers.size();
-	auto layersData = layers.data();
-	for (size_t layerIndex = layersSize - 2; layerIndex > 0; --layerIndex)
-	{
-		Layer &hiddenLayer = layersData[layerIndex];
-		Layer &nextLayer = layersData[layerIndex + 1];
-		auto hiddenLayerNeuronsSize = hiddenLayer.neurons.size();
-		auto hiddenLayerNeuronsData = hiddenLayer.neurons.data();
-		auto nextLayerNeuronsSize = nextLayer.neurons.size();
-		auto nextLayerNeuronsData = nextLayer.neurons.data();
-		auto &layerDerivative = derivatives[layerIndex - 1];
-		for (size_t neuronIndex = 0; neuronIndex < hiddenLayerNeuronsSize; ++neuronIndex)
-		{
-			long double error = 0.0;
-			for (size_t nextNeuronIndex = 0; nextNeuronIndex < nextLayerNeuronsSize; ++nextNeuronIndex)
-			{
-				error += nextLayerNeuronsData[nextNeuronIndex].weights[neuronIndex] * nextLayerNeuronsData[nextNeuronIndex].gradient;
-			}
-			hiddenLayerNeuronsData[neuronIndex].gradient = error * layerDerivative(hiddenLayerNeuronsData[neuronIndex].outputValue);
-			clipGradient(hiddenLayerNeuronsData[neuronIndex].gradient);
-		}
-	}
+    // Calculate gradients for the output layer (parallelized)
+    Layer &outputLayer = layers.back();
+    auto outputLayerNeuronsSize = outputLayer.neurons.size();
+    auto outputLayerNeuronsData = outputLayer.neurons.data();
+    auto targetValuesData = targetValues.data();
+    auto &outputDerivative = derivatives.back();
 
-	// Update weights and biases for all layers (except input layer)
-	for (size_t layerIndex = 1; layerIndex < layersSize; ++layerIndex)
-	{
-		Layer &layer = layersData[layerIndex];
-		Layer &prevLayer = layersData[layerIndex - 1];
-		auto prevLayerNeuronsData = prevLayer.neurons.data();
-		for (Neuron &neuron : layer.neurons)
-		{
-			auto weightsSize = neuron.weights.size();
-			auto neuronWeightsData = neuron.weights.data();
-			for (size_t w = 0; w < weightsSize; ++w)
-			{
-				neuronWeightsData[w] += learningRate * neuron.gradient * prevLayerNeuronsData[w].outputValue;
-			}
-			neuron.bias += learningRate * neuron.gradient;
-		}
-	}
+    #pragma omp parallel for
+    for (int i = 0; i < outputLayerNeuronsSize; ++i)
+    {
+        long double delta = targetValuesData[i] - outputLayerNeuronsData[i].outputValue;
+        outputLayerNeuronsData[i].gradient = delta * outputDerivative(outputLayerNeuronsData[i].outputValue);
+        clipGradient(outputLayerNeuronsData[i].gradient);
+    }
+
+    // Calculate gradients for the hidden layers (parallelized)
+    auto layersSize = layers.size();
+    auto layersData = layers.data();
+    for (int layerIndex = layersSize - 2; layerIndex > 0; --layerIndex)
+    {
+        Layer &hiddenLayer = layersData[layerIndex];
+        Layer &nextLayer = layersData[layerIndex + 1];
+        auto hiddenLayerNeuronsSize = hiddenLayer.neurons.size();
+        auto hiddenLayerNeuronsData = hiddenLayer.neurons.data();
+        auto nextLayerNeuronsSize = nextLayer.neurons.size();
+        auto nextLayerNeuronsData = nextLayer.neurons.data();
+        auto &layerDerivative = derivatives[layerIndex - 1];
+
+        #pragma omp parallel for
+        for (int neuronIndex = 0; neuronIndex < hiddenLayerNeuronsSize; ++neuronIndex)
+        {
+            long double error = 0.0;
+            for (size_t nextNeuronIndex = 0; nextNeuronIndex < nextLayerNeuronsSize; ++nextNeuronIndex)
+            {
+                error += nextLayerNeuronsData[nextNeuronIndex].weights[neuronIndex] * nextLayerNeuronsData[nextNeuronIndex].gradient;
+            }
+            hiddenLayerNeuronsData[neuronIndex].gradient = error * layerDerivative(hiddenLayerNeuronsData[neuronIndex].outputValue);
+            clipGradient(hiddenLayerNeuronsData[neuronIndex].gradient);
+        }
+    }
+
+    // Update weights and biases for all layers (except input layer) (parallelized)
+    #pragma omp parallel for
+    for (int layerIndex = 1; layerIndex < layersSize; ++layerIndex)
+    {
+        Layer &layer = layersData[layerIndex];
+        Layer &prevLayer = layersData[layerIndex - 1];
+        auto prevLayerNeuronsData = prevLayer.neurons.data();
+
+        for (Neuron &neuron : layer.neurons)
+        {
+            auto weightsSize = neuron.weights.size();
+            auto neuronWeightsData = neuron.weights.data();
+
+            // Parallelize the weight updates within each neuron
+            #pragma omp parallel for
+            for (int w = 0; w < weightsSize; ++w)
+            {
+                neuronWeightsData[w] += learningRate * neuron.gradient * prevLayerNeuronsData[w].outputValue;
+            }
+
+            neuron.bias += learningRate * neuron.gradient;
+        }
+    }
 };
 /*
  */

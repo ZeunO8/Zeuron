@@ -23,6 +23,11 @@ if(UNIX AND NOT APPLE)
     include_directories(${X11_INCLUDE_DIR})
 endif()
 
+find_package(OpenMP REQUIRED)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(zeuron OpenMP::OpenMP_CXX)
+endif()
+
 add_subdirectory(vendor/ByteStream)
 
 target_link_libraries(zeuron ByteStream)
