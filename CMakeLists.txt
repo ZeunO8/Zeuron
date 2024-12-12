@@ -4,7 +4,7 @@ project(zeuron VERSION 0.4.2)
 set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
-include_directories(vendor/fenster)
+include_directories(vendor/fenster/include)
 include_directories(vendor/ByteStream/include)
 
 add_library(zeuron
@@ -25,8 +25,10 @@ if(UNIX AND NOT APPLE)
 endif()
 
 add_subdirectory(vendor/ByteStream)
-
 target_link_libraries(zeuron ByteStream)
+
+add_subdirectory(vendor/fenster)
+target_link_libraries(zeuron fenster)
 
 if(WIN32)
     set(TEST_EXT ".exe")

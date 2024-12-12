@@ -1,7 +1,7 @@
 /*
  */
 #include <Visualizer.hpp>
-#include <fenster.h>
+#include <fenster.hpp>
 #include <bit>
 #include <numeric>
 #include <algorithm>
