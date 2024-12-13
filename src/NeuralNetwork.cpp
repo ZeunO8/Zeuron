@@ -325,13 +325,104 @@ const long double leakyReluDerivative(const long double &x)
 }
 /*
  */
+const long double softplusActivation(const long double &x)
+{
+	return std::log(1.0 + exp(x));
+};
+const long double softplusDerivative(const long double &x)
+{
+	return 1.0 / (1.0 + exp(-x)); // Equivalent to sigmoid activation
+};
+/*
+ */
+const long double gaussianActivation(const long double &x)
+{
+	return exp(-x * x);
+};
+const long double gaussianDerivative(const long double &x)
+{
+	return -2.0 * x * exp(-x * x);
+};
+/*
+ */
+const long double softsignActivation(const long double &x)
+{
+	return x / (1.0 + std::abs(x));
+};
+const long double softsignDerivative(const long double &x)
+{
+	const long double denom = 1.0 + std::abs(x);
+	return 1.0 / (denom * denom);
+};
+/*
+ */
+const long double bentIdentityActivation(const long double &x)
+{
+	return (std::sqrt(x * x + 1.0) - 1.0) / 2.0 + x;
+};
+const long double bentIdentityDerivative(const long double &x)
+{
+	return x / (2.0 * std::sqrt(x * x + 1.0)) + 1.0;
+};
+/*
+ */
+const long double arctanActivation(const long double &x)
+{
+	return std::atan(x);
+};
+const long double arctanDerivative(const long double &x)
+{
+	return 1.0 / (1.0 + x * x);
+};
+/*
+ */
+const long double sinusoidActivation(const long double &x)
+{
+	return std::sin(x);
+};
+const long double sinusoidDerivative(const long double &x)
+{
+	return std::cos(x);
+};
+/*
+ */
+const long double hardSigmoidActivation(const long double &x)
+{
+	return std::max(0.0L, std::min(1.0L, 0.2 * x + 0.5));
+};
+const long double hardSigmoidDerivative(const long double &x)
+{
+	return (x > -2.5 && x < 2.5) ? 0.2 : 0.0;
+};
+/*
+ */
+const long double mishActivation(const long double &x)
+{
+	return x * std::tanh(std::log(1.0 + exp(x)));
+};
+const long double mishDerivative(const long double &x)
+{
+	const long double sp = 1.0 / (1.0 + exp(-x)); // Sigmoid
+	const long double omega = 4.0 * (x + 1.0) + 4.0 * exp(2.0 * x) + exp(3.0 * x) + exp(x) * (6.0 + 4.0 * x);
+	const long double delta = 2.0 * (exp(x) + 1.0);
+	return sp * omega / (delta * delta);
+};
+/*
+ */
 NeuralNetwork::ActivationDerivativesMap NeuralNetwork::activationDerivatives = {
 	{NeuralNetwork::Sigmoid, {sigmoidActivation, sigmoidDerivative}},
 	{NeuralNetwork::Tanh, {tanhActivation, tanhDerivative}},
 	{NeuralNetwork::Linear, {linearActivation, linearDerivative}},
 	{NeuralNetwork::Swish, {swishActivation, swishDerivative}},
 	{NeuralNetwork::ReLU, {reluActivation, reluDerivative}},
-	{NeuralNetwork::LeakyReLU, {leakyReluActivation, leakyReluDerivative}}
+	{NeuralNetwork::LeakyReLU, {leakyReluActivation, leakyReluDerivative}},
+	{NeuralNetwork::Softplus, {softplusActivation, softplusDerivative}},
+	{NeuralNetwork::Gaussian, {gaussianActivation, gaussianDerivative}},
+	{NeuralNetwork::Softsign, {softsignActivation, softsignDerivative}},
+	{NeuralNetwork::BentIdentity, {bentIdentityActivation, bentIdentityDerivative}},
+	{NeuralNetwork::Arctan, {arctanActivation, arctanDerivative}},
+	{NeuralNetwork::Sinusoid, {sinusoidActivation, sinusoidDerivative}},
+	{NeuralNetwork::HardSigmoid, {hardSigmoidActivation, hardSigmoidDerivative}}
 };
 /*
  */

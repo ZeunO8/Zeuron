@@ -23,7 +23,14 @@ namespace zeuron
 			Tanh,
 			Swish,
 			ReLU,
-			LeakyReLU
+			LeakyReLU,
+			Softplus,
+			Gaussian,
+			Softsign,
+			BentIdentity,
+			Arctan,
+			Sinusoid,
+			HardSigmoid
 		};
 		typedef std::unordered_map<ActivationType, std::pair<ActivationFunction, DerivativeFunction>> ActivationDerivativesMap;
 		static ActivationDerivativesMap activationDerivatives;
