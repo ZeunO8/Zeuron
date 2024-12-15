@@ -1,3 +1,6 @@
 [submodule "vendor/ByteStream"]
 	path = vendor/ByteStream
 	url = git@github.com:ZeunO8/ByteStream.git
+[submodule "vendor/AbstractNexus"]
+	path = vendor/AbstractNexus
+	url = git@github.com:ZeunO8/AbstractNexus.git
