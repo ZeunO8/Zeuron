@@ -1,6 +1,3 @@
-[submodule "vendor/fenster"]
-	path = vendor/fenster
-	url = git@github.com:ZeunO8/fenster.git
 [submodule "vendor/ByteStream"]
 	path = vendor/ByteStream
 	url = git@github.com:ZeunO8/ByteStream.git
