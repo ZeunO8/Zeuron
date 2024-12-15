@@ -4,11 +4,12 @@
 #include <NeuralNetwork.hpp>
 #include <thread>
 #include <memory>
+#include <anex/modules/fenster/Fenster.hpp>
 /*
  */
-struct fenster;
 namespace zeuron
 {
+	using namespace anex::modules::fenster;
 	struct Color
 	{
 		uint8_t b;
@@ -16,21 +17,21 @@ namespace zeuron
 		uint8_t r;
 		uint8_t a;
 	};
-	struct Visualizer
-  {
-    NeuralNetwork &network;
-		std::thread windowThread;
-		unsigned int windowWidth;
-		unsigned int windowHeight;
-		std::shared_ptr<uint32_t> buf;
-		struct fenster *f;
-  	Visualizer(NeuralNetwork &network, const int &windowWidth, const int &windowHeight);
-		void close();
-		~Visualizer();
-    void render();
+	struct VisualizerEntity : anex::IEntity
+	{
+		NeuralNetwork& network;
+		VisualizerEntity(anex::IGame &game, NeuralNetwork& network);
+		void render() override;
 		uint32_t mapValueToColor(long double value);
 		uint32_t mapWeightToColor(const Neuron &neuron);
-		void startWindow();
+	};
+	struct VisualizerScene : anex::IScene
+	{
+		VisualizerScene(anex::IGame &game, NeuralNetwork& network);
+	};
+	struct Visualizer : FensterGame
+  {
+  	Visualizer(NeuralNetwork &network, const int &windowWidth, const int &windowHeight);
   };
 }
 /*

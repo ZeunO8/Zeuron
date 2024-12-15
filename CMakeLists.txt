@@ -4,7 +4,7 @@ project(zeuron VERSION 0.4.2)
 set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
-include_directories(vendor/fenster/include)
+include_directories(vendor/AbstractNexus/include)
 include_directories(vendor/ByteStream/include)
 
 add_library(zeuron
@@ -27,8 +27,8 @@ endif()
 add_subdirectory(vendor/ByteStream)
 target_link_libraries(zeuron ByteStream)
 
-add_subdirectory(vendor/fenster)
-target_link_libraries(zeuron fenster)
+add_subdirectory(vendor/AbstractNexus)
+target_link_libraries(zeuron abstractnexus)
 
 if(WIN32)
     set(TEST_EXT ".exe")
