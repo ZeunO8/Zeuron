@@ -2,6 +2,7 @@
 */
 #pragma once
 #include "./Layer.hpp"
+#include "./ActivationType.hpp"
 #include <unordered_map>
 #include <mutex>
 /*
@@ -16,22 +17,6 @@ namespace zeuron
 	#define DerivativeFunction const long double(*)(const long double &)
 	struct NeuralNetwork
 	{
-		enum ActivationType
-		{
-			Sigmoid,
-			Linear,
-			Tanh,
-			Swish,
-			ReLU,
-			LeakyReLU,
-			Softplus,
-			Gaussian,
-			Softsign,
-			BentIdentity,
-			Arctan,
-			Sinusoid,
-			HardSigmoid
-		};
 		typedef std::unordered_map<ActivationType, std::pair<ActivationFunction, DerivativeFunction>> ActivationDerivativesMap;
 		static ActivationDerivativesMap activationDerivatives;
 		std::vector<Layer> layers;

@@ -15,13 +15,13 @@ NeuralNetwork::NeuralNetwork(const unsigned long &firstLayerSize,
 	learningRate(learningRate),
 	clipGradientValue(clipGradientValue)
 {
-	layers.push_back({firstLayerSize, 0});
+	layers.push_back({firstLayerSize, 0, ActivationType::None});
 	for (const auto &layerSpec : layerSpecs)
 	{
 		const ActivationType &activationType = layerSpec.first;
 		unsigned long numberOfNeurons = layerSpec.second;
 		unsigned long numberOfInputs = layers.back().neurons.size();
-		layers.push_back({numberOfNeurons, numberOfInputs});
+		layers.push_back({numberOfNeurons, numberOfInputs, activationType});
 		activationTypes.push_back((int)activationType);
 		activations.push_back(std::get<0>(activationDerivatives[activationType]));
 		derivatives.push_back(std::get<1>(activationDerivatives[activationType]));
@@ -455,19 +455,19 @@ const long double mishDerivative(const long double &x)
 /*
  */
 NeuralNetwork::ActivationDerivativesMap NeuralNetwork::activationDerivatives = {
-	{NeuralNetwork::Sigmoid, {sigmoidActivation, sigmoidDerivative}},
-	{NeuralNetwork::Tanh, {tanhActivation, tanhDerivative}},
-	{NeuralNetwork::Linear, {linearActivation, linearDerivative}},
-	{NeuralNetwork::Swish, {swishActivation, swishDerivative}},
-	{NeuralNetwork::ReLU, {reluActivation, reluDerivative}},
-	{NeuralNetwork::LeakyReLU, {leakyReluActivation, leakyReluDerivative}},
-	{NeuralNetwork::Softplus, {softplusActivation, softplusDerivative}},
-	{NeuralNetwork::Gaussian, {gaussianActivation, gaussianDerivative}},
-	{NeuralNetwork::Softsign, {softsignActivation, softsignDerivative}},
-	{NeuralNetwork::BentIdentity, {bentIdentityActivation, bentIdentityDerivative}},
-	{NeuralNetwork::Arctan, {arctanActivation, arctanDerivative}},
-	{NeuralNetwork::Sinusoid, {sinusoidActivation, sinusoidDerivative}},
-	{NeuralNetwork::HardSigmoid, {hardSigmoidActivation, hardSigmoidDerivative}}
+	{ActivationType::Sigmoid, {sigmoidActivation, sigmoidDerivative}},
+	{ActivationType::Tanh, {tanhActivation, tanhDerivative}},
+	{ActivationType::Linear, {linearActivation, linearDerivative}},
+	{ActivationType::Swish, {swishActivation, swishDerivative}},
+	{ActivationType::ReLU, {reluActivation, reluDerivative}},
+	{ActivationType::LeakyReLU, {leakyReluActivation, leakyReluDerivative}},
+	{ActivationType::Softplus, {softplusActivation, softplusDerivative}},
+	{ActivationType::Gaussian, {gaussianActivation, gaussianDerivative}},
+	{ActivationType::Softsign, {softsignActivation, softsignDerivative}},
+	{ActivationType::BentIdentity, {bentIdentityActivation, bentIdentityDerivative}},
+	{ActivationType::Arctan, {arctanActivation, arctanDerivative}},
+	{ActivationType::Sinusoid, {sinusoidActivation, sinusoidDerivative}},
+	{ActivationType::HardSigmoid, {hardSigmoidActivation, hardSigmoidDerivative}}
 };
 /*
  */

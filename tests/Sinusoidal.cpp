@@ -81,12 +81,12 @@ int main(int argc, char **argv)
 	{
 		neuralNetworkPointer = std::make_shared<NeuralNetwork>(
 			1,
-			std::vector<std::pair<NeuralNetwork::ActivationType, unsigned long>>({
-	        { NeuralNetwork::Tanh, 18 },  // Start with a moderate number of neurons
-					{ NeuralNetwork::Tanh, 14 },   // Reduce the size progressively
-					{ NeuralNetwork::LeakyReLU, 10 },   // Further reduce to improve learning efficiency
-					{ NeuralNetwork::Tanh, 6 },        // Tanh here to allow non-linearity
-					{ NeuralNetwork::Tanh, 1 }         // Output layer
+			std::vector<std::pair<ActivationType, unsigned long>>({
+	        { ActivationType::Tanh, 18 },  // Start with a moderate number of neurons
+					{ ActivationType::Tanh, 14 },   // Reduce the size progressively
+					{ ActivationType::LeakyReLU, 10 },   // Further reduce to improve learning efficiency
+					{ ActivationType::Tanh, 6 },        // Tanh here to allow non-linearity
+					{ ActivationType::Tanh, 1 }         // Output layer
 			}),
 			0.015,
 			10

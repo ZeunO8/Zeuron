@@ -16,7 +16,7 @@ int main()
 	std::shared_ptr<NeuralNetwork> neuralNetworkPointer(
 	new NeuralNetwork(
 		2,
-		{{NeuralNetwork::Sigmoid, 4}, {NeuralNetwork::Sigmoid, 1}}
+		{{ActivationType::Sigmoid, 4}, {ActivationType::Sigmoid, 1}}
 	)
 );
 	auto &network = *neuralNetworkPointer;
