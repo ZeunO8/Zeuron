@@ -88,7 +88,8 @@ int main(int argc, char **argv)
 					{ NeuralNetwork::Tanh, 6 },        // Tanh here to allow non-linearity
 					{ NeuralNetwork::Tanh, 1 }         // Output layer
 			}),
-			0.015
+			0.015,
+			10
 		);
 	}
 	auto &network = *neuralNetworkPointer;

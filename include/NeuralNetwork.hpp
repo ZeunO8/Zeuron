@@ -36,6 +36,7 @@ namespace zeuron
 		static ActivationDerivativesMap activationDerivatives;
 		std::vector<Layer> layers;
 		long double learningRate;
+		long double clipGradientValue;
 		std::vector<int> activationTypes;
 		std::vector<const long double(*)(const long double &)> activations;
 		std::vector<const long double(*)(const long double &)> derivatives;
@@ -43,12 +44,14 @@ namespace zeuron
 		NeuralNetwork() = default;
 		NeuralNetwork(const unsigned long &firstLayerSize,
 									const std::vector<std::pair<ActivationType, unsigned long>> &layerSpecs,
-									const long double &learningRate = 0.13);
+									const long double &learningRate = 0.13,
+									const long double &clipGradientValue = -1.0);
 		NeuralNetwork(bs::ByteStream &byteStream);
 		NeuralNetwork(const NeuralNetwork &) = delete;
 		NeuralNetwork(NeuralNetwork &&) = delete;
 		void print();
 		void feedforward(const std::vector<long double> &inputValues);
+		void clipGradient(long double& gradient);
 		void backpropagate(const std::vector<long double> &targetValues);
 		const std::vector<long double> getOutputs() const;
 		bs::ByteStream serialize() const;

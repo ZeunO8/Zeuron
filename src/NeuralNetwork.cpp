@@ -10,8 +10,10 @@ using namespace bs;
  */
 NeuralNetwork::NeuralNetwork(const unsigned long &firstLayerSize,
 														 const std::vector<std::pair<ActivationType, unsigned long>> &layerSpecs,
-														 const long double &learningRate):
-	learningRate(learningRate)
+														 const long double &learningRate,
+														 const long double &clipGradientValue):
+	learningRate(learningRate),
+	clipGradientValue(clipGradientValue)
 {
 	layers.push_back({firstLayerSize, 0});
 	for (const auto &layerSpec : layerSpecs)
@@ -176,12 +178,14 @@ void NeuralNetwork::feedforward(const std::vector<long double> &inputValues)
  */
 const long double GRADIENT_CLIP_THRESHOLD = 10.0; // You can adjust this threshold
 
-void clipGradient(long double& gradient)
+void NeuralNetwork::clipGradient(long double& gradient)
 {
-	if (gradient > GRADIENT_CLIP_THRESHOLD)
-		gradient = GRADIENT_CLIP_THRESHOLD;
-	else if (gradient < -GRADIENT_CLIP_THRESHOLD)
-		gradient = -GRADIENT_CLIP_THRESHOLD;
+	if (clipGradientValue == -1.0)
+		return;
+	if (gradient > clipGradientValue)
+		gradient = clipGradientValue;
+	else if (gradient < -clipGradientValue)
+		gradient = -clipGradientValue;
 }
 void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
 {
