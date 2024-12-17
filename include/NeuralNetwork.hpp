@@ -53,6 +53,9 @@ namespace zeuron
 		void feedforward(const std::vector<long double> &inputValues);
 		void clipGradient(long double& gradient);
 		void backpropagate(const std::vector<long double> &targetValues);
+		long double calculateLoss(const std::vector<long double> &targetValues) const;
+		void reward(const long double &rewardRate);
+		void penalize(const long double &penaltyRate);
 		[[nodiscard]] const std::vector<long double> getOutputs() const;
 		[[nodiscard]] bs::ByteStream serialize() const;
 	};

@@ -239,6 +239,47 @@ void NeuralNetwork::backpropagate(const std::vector<long double> &targetValues)
         }
     }
 };
+long double NeuralNetwork::calculateLoss(const std::vector<long double> &targetValues) const
+{
+	long double totalLoss = 0.0;
+	const auto &outputLayer = layers.back();
+	for (size_t i = 0; i < targetValues.size(); ++i)
+	{
+		auto delta = targetValues[i] - outputLayer.neurons[i].outputValue;
+		totalLoss += delta * delta; // Mean Squared Error
+	}
+	return totalLoss / targetValues.size();
+};
+void NeuralNetwork::reward(const long double &rewardRate)
+{
+	for (Layer &layer : layers)
+	{
+		for (Neuron &neuron : layer.neurons)
+		{
+			for (long double &weight : neuron.weights)
+			{
+				weight += rewardRate * weight;
+			}
+			neuron.bias += rewardRate * neuron.bias;
+			clipGradient(neuron.bias); // Clip to avoid instability
+		}
+	}
+};
+void NeuralNetwork::penalize(const long double &penaltyRate)
+{
+	for (Layer &layer : layers)
+	{
+		for (Neuron &neuron : layer.neurons)
+		{
+			for (long double &weight : neuron.weights)
+			{
+				weight -= penaltyRate * weight;
+			}
+			neuron.bias -= penaltyRate * neuron.bias;
+			clipGradient(neuron.bias); // Clip to avoid instability
+		}
+	}
+};
 /*
  */
 const std::vector<long double> NeuralNetwork::getOutputs() const
