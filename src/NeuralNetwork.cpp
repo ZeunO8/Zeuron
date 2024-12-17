@@ -252,9 +252,9 @@ long double NeuralNetwork::calculateLoss(const std::vector<long double> &targetV
 };
 void NeuralNetwork::reward(const long double &rewardRate)
 {
-	for (Layer &layer : layers)
+	for (auto &layer : layers)
 	{
-		for (Neuron &neuron : layer.neurons)
+		for (auto &neuron : layer.neurons)
 		{
 			for (auto &weight : neuron.weights)
 			{
