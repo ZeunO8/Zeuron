@@ -256,7 +256,7 @@ void NeuralNetwork::reward(const long double &rewardRate)
 	{
 		for (Neuron &neuron : layer.neurons)
 		{
-			for (long double &weight : neuron.weights)
+			for (auto &weight : neuron.weights)
 			{
 				weight += rewardRate * weight;
 			}
