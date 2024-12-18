@@ -101,6 +101,10 @@ NeuralNetwork::NeuralNetwork(bs::ByteStream& byteStream)
 	{
 		return;
 	}
+	if (!byteStream.read(clipGradientValue, bytesRead, true))
+	{
+		return;
+	}
 	if (!byteStream.read(activationTypes, bytesRead, true))
 	{
 		return;
@@ -300,6 +304,7 @@ ByteStream NeuralNetwork::serialize() const
 {
 	ByteStream byteStream;
 	byteStream.write<const long double &>(learningRate);
+	byteStream.write<const long double &>(clipGradientValue);
 	byteStream.write<const std::vector<int> &>(activationTypes);
 	byteStream.write<const std::vector<Layer> &>(layers);
 	return byteStream;
