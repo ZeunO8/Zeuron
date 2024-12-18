@@ -150,7 +150,7 @@ VisualizerScene::VisualizerScene(anex::IGame &game, NeuralNetwork& network):
 /*
  */
 Visualizer::Visualizer(NeuralNetwork& network, const int &windowWidth, const int &windowHeight):
-	FensterGame(windowWidth, windowHeight)
+	FensterGame("Zeuron Visualizer", windowWidth, windowHeight)
 {
     setIScene(std::make_shared<VisualizerScene>(*this, network));
 };
